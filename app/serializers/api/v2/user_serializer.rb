@@ -6,7 +6,7 @@ module Api
 
       def address
         return nil unless object.address.present?
-        AddressSerializer.new(object.address).serializable_hash
+        AddressSerializer.new(object.address)
       end
 
       class AddressSerializer < ActiveModel::Serializer
