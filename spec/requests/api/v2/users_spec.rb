@@ -2,14 +2,27 @@ require 'rails_helper'
 require 'pry'
 
 RSpec.describe '/api/v2/users', type: :request do
+  let(:address_attrs) do
+    {
+      street: '1st Street',
+      number: '123',
+      city: 'New York',
+      region: 'New York',
+      neighborhood: 'Brooklin',
+      country: 'USA',
+      zipcode: '12345'
+    }
+  end
   let(:user_attrs) do
     {
       name: 'stefano',
       email: 'stefano@heavenstudio.com.br',
       picture: 'something',
-      gender: 'M'
+      gender: 'M',
+      address_attributes: address_attrs
     }
   end
+  let(:json_keys){ [:name, :email, :gender] }
   let(:invalid_user_attrs) { user_attrs.merge(name: '') }
 
   describe 'GET users' do
@@ -26,7 +39,9 @@ RSpec.describe '/api/v2/users', type: :request do
         get '/api/v2/users'
         data = JSON.parse(response.body, symbolize_names: true)[:data]
         expect(data.size).to eq 1
-        expect(data[0][:attributes].slice(*user_attrs.keys)).to eq(user_attrs)
+        expect(data[0][:attributes].slice(*json_keys)).to eq(user_attrs.except(:picture, :address_attributes))
+        expect(data[0][:attributes][:"picture-url"]).to eq(user_attrs[:picture])
+        expect(data[0][:attributes][:address]).to eq(address_attrs)
       end
     end
   end
@@ -44,7 +59,9 @@ RSpec.describe '/api/v2/users', type: :request do
       it 'returns 200' do
         get "/api/v2/users/#{user.to_param}"
         data = JSON.parse(response.body, symbolize_names: true)[:data]
-        expect(data[:attributes].slice(*user_attrs.keys)).to eq(user_attrs)
+        expect(data[:attributes].slice(*json_keys)).to eq(user_attrs.except(:picture, :address_attributes))
+        expect(data[:attributes][:"picture-url"]).to eq(user_attrs[:picture])
+        expect(data[:attributes][:address]).to eq(address_attrs)
       end
     end
   end
@@ -66,7 +83,9 @@ RSpec.describe '/api/v2/users', type: :request do
       it 'returns the new created user' do
         post '/api/v2/users', params: { user: user_attrs }
         data = JSON.parse(response.body, symbolize_names: true)[:data]
-        expect(data[:attributes].slice(*user_attrs.keys)).to eq(user_attrs)
+        expect(data[:attributes].slice(*json_keys)).to eq(user_attrs.except(:picture, :address_attributes))
+        expect(data[:attributes][:"picture-url"]).to eq(user_attrs[:picture])
+        expect(data[:attributes][:address]).to eq(address_attrs)
         expect(data[:id]).to be_present
         expect(data[:errors]).to be_nil
       end

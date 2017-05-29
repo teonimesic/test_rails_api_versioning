@@ -41,7 +41,11 @@ module Api
       end
 
       def user_params
-        params.require(:user).permit(:name, :email, :picture, :gender)
+        params.require(:user).permit(
+          :name, :email, :picture, :gender, address_attributes: %i(
+            street number city region neighborhood country zipcode
+          )
+        )
       end
     end
   end

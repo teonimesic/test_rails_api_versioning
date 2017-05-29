@@ -14,6 +14,20 @@ module SerializerMatchers
     end
   end
 
+  RSpec::Matchers.define :have_sub_attribute do |field, subfield, value|
+    match do |actual|
+      return false unless actual[:data].present?
+      return false unless actual[:data][:attributes].present?
+      return false unless actual[:data][:attributes][field].present?
+      return false unless actual[:data][:attributes][field][subfield].present?
+      actual[:data][:attributes][field][subfield] == value
+    end
+
+    failure_message do |actual|
+      "expected #{actual} to have attribute #{field}/#{subfield} with value #{value} inside data"
+    end
+  end
+
   RSpec::Matchers.define :have_id do |expected|
     match do |actual|
       return false unless actual[:data].present?
