@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Api::V2::UserSerializer, type: :serializer do
+describe V2::UserSerializer, type: :serializer do
   let(:address) { Address.new street: '1st Street', number: '123', city: 'New York', region: 'New York', country: 'USA', zipcode: '12345' }
   let(:user) { User.create name: 'stefano', email: 'a@a.com', picture: 'something', gender: 'M', address: address }
   let(:serializer) { described_class.new(user) }

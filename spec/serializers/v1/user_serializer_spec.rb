@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'pry'
 
-describe Api::V1::UserSerializer, type: :serializer do
+describe V1::UserSerializer, type: :serializer do
   let(:user) { User.create name: 'stefano', email: 'a@a.com', picture: 'something' }
   let(:serializer) { described_class.new(user) }
   let(:adapter) { ActiveModelSerializers::Adapter.create(serializer) }
